@@ -2,7 +2,7 @@ from xml.etree.ElementTree import XMLID
 
 from selenium.webdriver.common.by import By
 
-class TestLocators:
+class testlocators:
     BUTTON_LOGIN_IN_ACC_IN_MAIN = By.XPATH, "//button[text()='Войти в аккаунт']"
     HYPERTEXT_REGISTRATION =By.XPATH, "//*[contains(@class,'Auth_link')]"
     INPUT_FORM_REGISTRATION_NAME = By.XPATH, "//form[contains(@class,Áuth_form')]//fieldset[1]//input"

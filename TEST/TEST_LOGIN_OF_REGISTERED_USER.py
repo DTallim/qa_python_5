@@ -1,131 +1,58 @@
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from data import TestUrl, TEST_USER
-from locators import TestLocators
+from data import (testurl,test_user)
+from locators import testlocators
 from conftest import driver
 
 
 class TestLoginUsers:
+    def login_to_account(self,driver,start_url):
+        driver.get(start_url)
+        #Найти и нажать элемент для перехода к форме логина если необходимо
+        if start_url == testurl.URL_REGISTRATION_FORM:
+            driver.find_element(*testlocators.LOGIN_FROM_AUTORIZATION).click()
+        elif start_url == testurl.URL_REGISTRATION_FORM:
+            driver.find_element(*testlocators.LOGIN_FROM_RECOVERY_PSW).click()
+        elif start_url == testurl.MAIN_URL_TEST:
+            driver.find_element(*testlocators.BUTTON_LOGIN_IN_ACC_IN_MAIN).click()
+        elif start_url == testurl.MAIN_URL_TEST:
+            driver.find_element(*testlocators.PERSONAL_ACCOUNT).click()
+
+        #Ожидание загрузки формы
+        WebDriverWait(driver, 5).until(
+            expected_conditions.visibility_of_element_located(testlocators.HEADER_FORM_LOGIN)
+        )
+
+        #Заполенение формы логина
+
+        driver.find_element(*testlocators.INPUT_FROM_AUTORIZATIONS_EMAIL).send_keys(test_user['email'])
+        driver.find_element(*testlocators.INPUT_FROM_AUTORIZATIONS_PASSWORD).send_keys(test_user['password'])
+        driver.find_element(*testlocators.BUTTON_FORM_AUTORIZATIONS_LOGIN).click()
+
+        #Ожидание загрузки страницы после логина
+        WebDriverWait(driver,5).until(
+            expected_conditions.visibility_of_element_located(testlocators.BUTTON_PLACE_AN_ORDER)
+        )
+
+
     # Тестирование входа по кнопке "Войти в аккаунт" на главной странице
     def test_login_by_button_on_main(self, driver):
-        driver.get(TestUrl.MAIN_URL_TEST)
+        self.login_to_account(driver,testurl.MAIN_URL_TEST)
+        driver.find_element(*testlocators.PERSONAL_ACCOUNT).click()
+        assert driver.current_url == 'https://stellarburgers.nomoreparties.site/account/profile'
 
-        # Найти кнопку "Войти в аккаунт" и нажать
-        driver.find_element(*TestLocators.BUTTON_LOGIN_IN_ACC_IN_MAIN).click()
+    def test_login_by_button_form_personal_account(self,driver):
+        self.login_to_account(driver,testurl.MAIN_URL_TEST)
+        driver.find_element(*testlocators.PERSONAL_ACCOUNT).click()
+        assert driver.current_url =='https://stellarburgers.nomoreparties.site/account/profile'
 
-        # Добавить ожидание для загрузки страницы
-        WebDriverWait(driver, 5).until(
-            expected_conditions.visibility_of_element_located(
-                TestLocators.HEADER_FORM_LOGIN)
-        )
+    def test_login_by_button_from_registration_form(self,driver):
+        self.login_to_account(driver, testurl.URL_REGISTRATION_FORM)
+        driver.find_element(*testlocators.PERSONAL_ACCOUNT).click()
+        assert  driver.current_url == 'https://stellarburgers.nomoreparties.site/account/profile'
 
-        # Найти поле "Email" и заполнить
-        driver.find_element(*TestLocators.INPUT_FROM_AUTORIZATIONS_EMAIL).send_keys(TEST_USER['email'])
-        # Найти поле "Пароль" и заполнить его
-        driver.find_element(*TestLocators.INPUT_FROM_AUTORIZATIONS_PASSWORD).send_keys(TEST_USER['password'])
-        # Найти и нажать кнопку "Войти"
-        driver.find_element(*TestLocators.BUTTON_FORM_AUTORIZATIONS_LOGIN).click()
-
-        # Добавить ожидание для загрузки страницы
-        WebDriverWait(driver, 5).until(
-            expected_conditions.visibility_of_element_located(
-                TestLocators.BUTTON_PLACE_AN_ORDER)
-        )
-
-        # Переход в личный кабинет
-        driver.find_element(*TestLocators.PERSONAL_ACCOUNT).click()
-
-        assert driver.current_url == 'https://stellaburgers.nomoreparties.site/account/profile'
-
-        # Тестирование входа через кнопку "Личный кабинет"
-        def test_login_by_button_from_personal_account(self, driver):
-            driver.get(TestUrl.MAIN_URL_TEST)
-
-            # Находим кнопку "Личный кабинет" и нажать
-            driver.find_element(*TestLocators.PERSONAL_ACCOUNT).click()
-
-            # Добавить ожидание для загрузки страницы
-            WebDriverWait(driver, 5).until(
-                expected_conditions.visibility_of_element_located(
-                    TestLocators.HEADER_FORM_LOGIN)
-            )
-
-            # Найти поле "Email" и заполнить его
-            driver.find_element(*TestLocators.INPUT_FROM_AUTORIZATIONS_EMAIL).send_keys(TEST_USER['email'])
-            # Найти поле "Пароль" и заполнить его
-            driver.find_element(*TestLocators.INPUT_FROM_AUTORIZATIONS_PASSWORD).send_keys(TEST_USER['password'])
-            # Найти кнопку "Войти" и нажать
-            driver.find_element(*TestLocators.BUTTON_FORM_AUTORIZATIONS_LOGIN).click()
-
-            # Добавить оджидание загрузки страницы
-            WebDriverWait(driver, 5).until(
-                expected_conditions.visibility_of_element_located(
-                    TestLocators.BUTTON_PLACE_AN_ORDER)
-            )
-
-            # Переходим в личный кабинет
-            driver.find_element(*TestLocators.PERSONAL_ACCOUNT).click()
-
-            assert driver.current_url == 'https://stellaburgers.nomoreparties.site/account/profile'
-
-            # Тестирование входа через кнопку в форме регистрации
-            def test_login_by_button_from_registration_form(self, driver):
-                driver.get(TestUrl.URL_REGISTRATION_FORM)
-
-                # Найти кнопку "Войти" и нажать
-                driver.find_element(*TestLocators.LOGIN_FROM_AUTORIZATION).click()
-
-                # Добавить ожидание для загрузки страницы
-                WebDriverWait(driver, 5).until(
-                    expected_conditions.visibility_of_element_located(
-                        TestLocators.HEADER_FORM_LOGIN)
-                )
-
-                # Найти поле "Email" и заполнить
-                driver.find_element(*TestLocators.INPUT_FROM_AUTORIZATIONS_EMAIL).send_keys(TEST_USER['email'])
-                # Найти поле "Пароль" и заполнить
-                driver.find_element(*TestLocators.INPUT_FROM_AUTORIZATIONS_PASSWORD).send_keys(TEST_USER['password'])
-                # Найти и нажать кнопку "Войти"
-                driver.find_element(*TestLocators.BUTTON_FORM_AUTORIZATIONS_LOGIN).click()
-
-                # Добавить ожидание для загрузки страницы
-                WebDriverWait(driver, 5).until(
-                    expected_conditions.visibility_of_element_located(
-                        TestLocators.BUTTON_PLACE_AN_ORDER)
-                )
-
-                # Переходим в личный кабинет
-                driver.find_element(*TestLocators.PERSONAL_ACCOUNT).click()
-
-                assert driver.current_url == 'https://stellaerburgers.nomoreparties.site/account/profile'
-
-                # Тестирование вход чрез кнопку в форме восстановления пароля
-                def test_login_by_button_from_psw_recovery_form(self, driver):
-                    driver.get(TestUrl.URL_REGISTRATION_FORM)
-
-                    # Найти кнопку "Войти" и нажать
-                    driver.find_element(*TestLocators.LOGIN_FROM_RECOVERY_PSW).click()
-
-                    # Найти поле "Email" и заполни его
-                    driver.find_element(*TestLocators.LOGIN_FROM_RECOVERY_PSW).send_keys(TEST_USER['email'])
-
-                    # Найти поле "Пароль" и заполнить его
-                    driver.find_element(*TestLocators.INPUT_FROM_AUTORIZATIONS_PASSWORD).send_keys(
-                        TEST_USER['password'])
-                    # Найти кнопку "Войти" и нажать
-                    driver.find_element(*TestLocators.BUTTON_FORM_AUTORIZATIONS_LOGIN).click()
-                    # Добавить ожидание для загрузки страницы
-                    WebDriverWait(driver, 5).until(
-                        expected_conditions.visibility_of_element_located(
-                            TestLocators.BUTTON_PLACE_AN_ORDER)
-                    )
-
-                    # Переходим в личный кабинет
-                    driver.find_element(*TestLocators.PERSONAL_ACCOUNT).click()
-
-                    assert driver.current_url == 'https://stellarburgers.nomoreparties.site/account/profile'
-
-
-
-
+    def test_login_by_button_from_psw_recovery_form(self,driver):
+        self.login_to_account(driver,testurl.URL_PWS_RECOVERY_FORM)
+        driver.find_element(*testlocators.PERSONAL_ACCOUNT).click()
+        assert driver.current_url == 'https://stellarburgers.nomoreparties.site/account/profile'
