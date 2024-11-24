@@ -1,5 +1,3 @@
-from xml.etree.ElementTree import XMLID
-
 from selenium.webdriver.common.by import By
 
 class testlocators:

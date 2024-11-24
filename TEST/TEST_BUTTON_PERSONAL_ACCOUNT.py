@@ -12,10 +12,8 @@ class TestButtonPersAcc:
     #Найти кнопку "Войти в аккаунт" и нажать ее
         driver.find_element(*testlocators.BUTTON_LOGIN_IN_ACC_IN_MAIN).click()
     #Добавить ожидание для загрузки страницы
-        WebDriverWait(driver,5).until(
-            expected_conditions.visibility_of_element_located(
-                testlocators.HEADER_FORM_LOGIN)
-        )
+        wait = WebDriverWait(driver,5)
+        wait.until(expected_conditions.visibility_of_element_located(testlocators.HEADER_FORM_LOGIN))
 
         #Найти поле Email и заполнить его
         driver.find_element(*testlocators.INPUT_FROM_AUTORIZATIONS_EMAIL).send_keys(test_user['email'])
@@ -25,27 +23,27 @@ class TestButtonPersAcc:
         driver.find_element(*testlocators.BUTTON_FORM_AUTORIZATIONS_LOGIN).click()
 
         #Добавить ожидание для загрузки страницы
-        WebDriverWait(driver,5).until(
-            expected_conditions.visibility_of_element_located(
-                testlocators.BUTTON_PLACE_AN_ORDER)
-        )
+        wait.until(expected_conditions.visibility_of_element_located(testlocators.BUTTON_PLACE_AN_ORDER))
 
         #Переходим в личный кабинет
         driver.find_element(*testlocators.PERSONAL_ACCOUNT).click()
 
-        assert driver.surrent_url == 'https:stellaburgers.nomoreparties.site/account/profile'
+        profile_url = testurl.URL_PROFILE
+        wait.until(expected_conditions.url_to_be(profile_url))
+        assert driver.current_url == profile_url, "Должен быть перенаправлен на страницу профиля"
 
     #Тестирование перехода не авторизованного пользователя
     def test_click_button_unautorized_user(self,driver):
         driver.get(testurl.MAIN_URL_TEST)
 
-        #Переходим в личном кабинете
         driver.find_element(*testlocators.PERSONAL_ACCOUNT).click()
 
-        #Переход в личный кабинет
-        WebDriverWait(driver,5).until(
-            expected_conditions.visibility_of_element_located(
-                testlocators.HEADER_FORM_LOGIN)
-        )
+        wait = WebDriverWait(driver,5)
+        wait.until(expected_conditions.visibility_of_element_located(testlocators.HEADER_FORM_LOGIN))
 
-        assert driver.current_url == 'https://stellarburgers.nomoreparties.site/login'
+        login_url = testurl.URL_LOGIN
+        wait.until(expected_conditions.url_to_be(login_url))
+        assert driver.current_url == login_url,"Должен перенаправить на страницу входа в систему"
+
+        login_header = driver.find_element(*testlocators.HEADER_FORM_LOGIN)
+        assert login_header.is_displayed(), "Форма входа в систему должны быть видна"
