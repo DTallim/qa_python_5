@@ -1,77 +1,50 @@
-import pytest
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from data import testurl
-from helpers import generates_email,generates_password
+from data import test_url, test_user
 from locators import testlocators
 from conftest import driver
 
-class TestRegistration:
-    #Тестирование формы регистрации с валидными данными "Email" и "Пароль"
-    @pytest.mark.parametrize('email_char_num, psw_char_num,[(1,6),(2,7),(15,15)]')
+class TestLogout:
+    # Тестирование выхода из учетной записи
+    def test_logout(self, driver):
+        driver.get(test_url.MAIN_URL_TEST)
 
-    def test_registration_with_valid_email_and_password(self,driver,email_char_num,psw_char_num):
-
-        driver.get(testurl.MAIN_URL_TEST)
-
-        #Найти кнопку "Войти в аккаунт" и нажать
+        # Найти кнопку "Войти в аккаунт" и нажать
         driver.find_element(*testlocators.BUTTON_LOGIN_IN_ACC_IN_MAIN).click()
 
-        #Добавить явное ожидание для загрузки страницы
-        wait = WebDriverWait(driver,5)
-        wait.until(expected_conditions.presence_of_element_located(testlocators.HEADER_FORM_LOGIN))
+        # Добавь явное ожидание для загрузки страницы
+        WebDriverWait(driver, 5).until(
+            expected_conditions.visibility_of_element_located(
+                testlocators.HEADER_FORM_LOGIN)
+        )
 
-        #Найти кнопку "Зарегистрироваться" и нажать
-        driver.find_element(*testlocators.HYPERTEXT_REGISTRATION).click()
+        # Найти поле "Email" и заполни его
+        driver.find_element(*testlocators.INPUT_FORM_AUTHORIZATIONS_EMAIL).send_keys(test_user['email'])
+        # Найти поле "Пароль" и заполни его
+        driver.find_element(*testlocators.INPUT_FORM_AUTHORIZATIONS_PASSWORD).send_keys(test_user['password'])
+        # Найти кнопку "Войти" и нажать
+        driver.find_element(*testlocators.BUTTON_FORM_AUTHORIZATIONS_LOGIN).click()
 
-        #Найти поле "Имя" и заполнить его
-        driver.find_element(testlocators.INPUT_FORM_REGISTRATION_NAME).send_keys('Алиса')
+        # Добавь явное ожидание для загрузки страницы
+        WebDriverWait(driver, 5).until(
+            expected_conditions.visibility_of_element_located(
+                testlocators.BUTTON_PLACE_AN_ORDER)
+        )
 
-        #Найти поле "Email" и заполнить его
-        driver.find_element(*testlocators.INPUT_FROM_AUTORIZATIONS_EMAIL).send_keys(generates_email(email_char_num))
+        # Переходим в личный кабинет
+        driver.find_element(*testlocators.PERSONAL_ACCOUNT).click()
 
-        #Найти "Пароль" и заполнить его
-        driver.find_element(*testlocators.BUTTON_REGISTRATION).click()
+        WebDriverWait(driver, 5).until(
+            expected_conditions.visibility_of_element_located(
+                testlocators.BUTTON_LOGOUT)
+        )
 
-        #Найти кнопку "Зарегистрироваться" и нажать
-        driver.find_element(*testlocators.BUTTON_REGISTRATION).click()
+        # Найти кнопку "Выйти" и нажать
+        driver.find_element(*testlocatorsBUTTON_LOGOUT).click()
 
-        #Добавить ожидание для загрузки страницы
-        wait.until(expected_conditions.presence_of_element_located(testlocators.HEADER_FORM_LOGIN))
-
-        login_form = driver.find_element(*testlocators.HEADER_FORM_LOGIN)
-        assert login_form.is_displayed(), "Форма входа в систему должна быть видна при успешной регистрации"
-        assert driver.current_url == testurl.URL_LOGIN
-
-    def test_registration_with_incorrect_psw(self,driver):
-        driver.get(testurl.MAIN_URL_TEST)
-
-        #Найти кнопку "Войти в аккаунт" и нажать
-        driver.find_element(*testlocators.BUTTON_LOGIN_IN_ACC_IN_MAIN).click()
-
-        #Добавь явное ожидание для загрузки и нажать
-        wait = WebDriverWait(driver,5)
-        wait.until(expected_conditions.presence_of_element_located(testlocators.HEADER_FORM_LOGIN))
-
-        #найти кнопку "Зарегистрироваться" и нажать
-        driver.find_element(*testlocators.HYPERTEXT_REGISTRATION).click()
-
-        #Найти поле "Имя" и заполнить
-        driver.find_element(*testlocators.INPUT_FORM_REGISTRATION_NAME).send_keys('Алиса')
-
-        #Найти поле "Email" и заполнить
-        driver.find_element(*testlocators.INPUT_FROM_AUTORIZATIONS_EMAIL).send_keys(generates_email(5))
-
-        #Найти поле "Пароль" и заполнить его
-        driver.find_element(*testlocators.INPUT_FORM_REGISTRATION_PASSWORD).send_keys('qwe1')
-
-        #Найти кнопку "Зарегистрироваться" и нажать
-        driver.find_element(*testlocators.BUTTON_REGISTRATION).click()
-        error_massage = wait.until(expected_conditions.presence_of_element_located(testlocators.INCORRECT_PASSWORD_MASSAGE))
-        #Убедиться в появлении сообщения об ошибке
-        assert error_massage.is_displayed(), "Должно быть видно сообщение об ошибке ввода пароля"
-
-
-
-
+        WebDriverWait(driver,5).until(
+            expected_conditions.visibility_of_element_located(
+                testlocators.HEADER_FORM_LOGIN
+            )
+        )
