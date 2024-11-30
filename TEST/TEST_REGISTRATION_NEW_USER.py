@@ -44,7 +44,7 @@ class TestRegistration:
             testlocators.HEADER_FORM_LOGIN)
         )
 
-        assert driver.current_url == 'https://stellarburgers.nomoreparties.site/login'
+        assert driver.current_url == test_url.LOGIN_PAGE_URL
 
 def test_registration_with_incorrect_psw(self, driver):
     driver.get(test_url.MAIN_URL_TEST)
@@ -80,6 +80,5 @@ def test_registration_with_incorrect_psw(self, driver):
     )
 
 # Убедиться в появлении сообщения об ошибке
-    text_error = driver.find_element(*testlocators.INCORRECT_PASSWORD_MESSAGE).text
-
-    assert 'Некорректный пароль' in text_error
+    assert driver.find_element(*testlocators.INCORRECT_PASSWORD_MESSAGE).is_displayed()
+    assert driver.find_element(*testlocators.INCORRECT_PASSWORD_MESSAGE).text == 'Некорректный пароль'

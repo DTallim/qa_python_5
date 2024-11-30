@@ -25,7 +25,7 @@ def login_user(driver):
 
     driver.find_element(*testlocators.PERSONAL_ACCOUNT).click()
 
-    assert driver.current_url == 'https://stellarburgers.nomoreparties.site/account'
+    assert driver.current_url == test_url.ACCOUNT_PAGE_URL
 
 
 class TestLoginUsers:

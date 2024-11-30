@@ -18,6 +18,7 @@ class TestTransitions:
             expected_conditions.visibility_of_element_located(
                 testlocators.HEADER_FORM_LOGIN)
         )
+        assert driver.find_element(*testlocators.HEADER_FORM_LOGIN).is_displayed(), "Форма логина не отображается"
 
         # Найти поле "Email" и заполни его
         driver.find_element(*testlocators.INPUT_FORM_AUTHORIZATIONS_EMAIL).send_keys(test_user['email'])
@@ -31,6 +32,7 @@ class TestTransitions:
             expected_conditions.visibility_of_element_located(
                 testlocators.BUTTON_PLACE_AN_ORDER)
         )
+        assert driver.find_element(*testlocators.BUTTON_PLACE_AN_ORDER).is_displayed(), "Кнопка размещения заказа не отображается"
 
         # Переходим в личный кабинет
         driver.find_element(*testlocators.PERSONAL_ACCOUNT).click()
@@ -39,6 +41,8 @@ class TestTransitions:
             expected_conditions.visibility_of_element_located(
                 testlocators.BUTTON_LOGOUT)
         )
+        assert driver.find_element(
+            *testlocators.BUTTON_LOGOUT).is_displayed(), "Кнопка выхода из аккаунта не отображается"
 
         # Найти "Конструктор" и нажать
         driver.find_element(*testlocators.BUTTON_CONSTRUCTOR).click()
@@ -92,4 +96,4 @@ class TestTransitions:
                 testlocators.BUTTON_PLACE_AN_ORDER)
         )
 
-        assert driver.current_url == 'https://stellarburgers.nomoreparties.site/'
+        assert driver.current_url == test_url.MAIN_URL_TEST

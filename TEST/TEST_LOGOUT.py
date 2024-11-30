@@ -41,10 +41,18 @@ class TestLogout:
         )
 
         # Найти кнопку "Выйти" и нажать
-        driver.find_element(*testlocatorsBUTTON_LOGOUT).click()
+        driver.find_element(*testlocators.BUTTON_LOGOUT).click()
 
         WebDriverWait(driver,5).until(
             expected_conditions.visibility_of_element_located(
                 testlocators.HEADER_FORM_LOGIN
             )
         )
+
+        assert driver.find_element(
+            *testlocators.HEADER_FORM_LOGIN).is_displayed(), "Форма входа не отображается после выхода"
+
+        # Проверяем URL после выхода
+        assert test_url.MAIN_URL_TEST in driver.current_url, "URL не соответствует ожидаемому после выхода"
+
+
