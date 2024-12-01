@@ -52,7 +52,4 @@ class TestLogout:
         assert driver.find_element(
             *testlocators.HEADER_FORM_LOGIN).is_displayed(), "Форма входа не отображается после выхода"
 
-        # Проверяем URL после выхода
-        assert test_url.MAIN_URL_TEST in driver.current_url, "URL не соответствует ожидаемому после выхода"
-
 

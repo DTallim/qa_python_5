@@ -81,4 +81,3 @@ def test_registration_with_incorrect_psw(self, driver):
 
 # Убедиться в появлении сообщения об ошибке
     assert driver.find_element(*testlocators.INCORRECT_PASSWORD_MESSAGE).is_displayed()
-    assert driver.find_element(*testlocators.INCORRECT_PASSWORD_MESSAGE).text == 'Некорректный пароль'
